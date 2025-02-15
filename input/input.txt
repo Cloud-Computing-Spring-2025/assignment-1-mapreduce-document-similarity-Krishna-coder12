@@ -1,0 +1,4 @@
+doc1 hadoop is a distributed system
+doc2 hadoop is used for big data system processing.
+doc3 hadoop is a big data system is important for analysis
+
