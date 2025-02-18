@@ -18,17 +18,17 @@ You will be given multiple text documents. Each document will contain several wo
 
 ##### **doc1.txt**  
 ```
-hadoop is a distributed system
+doc1 hadoop is a distributed system
 ```
 
 ##### **doc2.txt**  
 ```
-hadoop is used for big data processing
+doc2 hadoop is used for big data system processing.
 ```
 
 ##### **doc3.txt**  
 ```
-big data is important for analysis
+doc3 hadoop is a big data system is important for analysis
 ```
 
 ---
@@ -55,40 +55,25 @@ Where:
 
 Consider two documents:
  
-**doc1.txt words**: `{hadoop, is, a, distributed, system}`
-**doc2.txt words**: `{hadoop, is, used, for, big, data, processing}`
+**doc2.txt words**: `{hadoop, is, used, for, big, data, system, processing}`
+**doc3.txt words**: `{hadoop, is, a, big, data, system, is, important, for, analysis}`
 
-- Common words: `{hadoop, is}`
-- Total unique words: `{hadoop, is, a, distributed, system, used, for, big, data, processing}`
+- Common words: `{hadoop, is, big, data, system, for}`
+- Total unique words: `{hadoop, is, used, for, big, data, system, processing, a, important, analysis}`
 
 Jaccard Similarity calculation:
 ```
-|A ∩ B| = 2 (common words)
-|A ∪ B| = 10 (total unique words)
+|A ∩ B| = 6 (common words)
+|A ∪ B| = 11 (total unique words)
 
-Jaccard Similarity = 2/10 = 0.2 or 20%
+Jaccard Similarity = 6/11 = 0.54 or 54%
 ```
-
-## Use Cases
-
-Jaccard Similarity is commonly used in:
-- Document similarity detection
-- Plagiarism checking
-- Recommendation systems
-- Clustering algorithms
-
-## Implementation Notes
-
-When computing similarity for multiple documents:
-- Compare each document pair
-- Output pairs with similarity > 50%
 
 ### **📤 Expected Output**  
 
 The output should show the Jaccard Similarity between document pairs in the following format:  
 ```
-(doc1, doc2) -> 60%  
-(doc2, doc3) -> 50%  
+(doc2, doc3)	54% 
 ```
 
 ---
@@ -170,3 +155,31 @@ If you want to download the output to your local machine:
 hdfs dfs -get /output_final /path/to/local/output
 ```
 ---
+
+
+## 🚧 Challenges Faced & Solutions
+
+### 1. Controller Error in the Hadoop Cluster
+- Problem: The MapReduce job failed due to an issue with the controller in the Hadoop setup.
+- Solution: Restarted the entire Hadoop cluster by executing docker-compose down and then docker-compose up -d, ensuring all services were correctly initialized 
+  before retrying the job.
+
+### 2. Mapper Not Emitting Correct Output
+- Problem: The Mapper was failing to emit the expected key-value pairs.
+- Solution: Investigated the issue through logs and confirmed that the input text was being tokenized properly.
+
+### 3. Memory Overflow in the Reducer
+- Problem: Large sets of documents led to memory overflow errors in the reducer.
+- Solution: Optimized the reducer logic to process documents in smaller batches to avoid memory overload.
+
+### 4. Permission Issues on HDFS Write
+- Problem: Write permissions were not granted for the output directory in HDFS.
+- Solution: Fixed the issue by running hdfs dfs -chmod -R 777 /output_final to update permissions.
+
+### 5. Inconsistent Jaccard Similarity Calculations
+- Problem: Jaccard similarity calculations were producing inconsistent results due to leading and trailing spaces in words.
+- Solution: Removed unnecessary spaces from the words before adding them to the sets to ensure accurate calculations.
+
+### 6. Output Formatting Issues
+- Problem: The similarity percentages in the output were not formatted correctly.
+- Solution: Adjusted the reducer logic to round the percentages to two decimal places, ensuring proper formatting.
